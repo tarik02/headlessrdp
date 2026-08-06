@@ -65,6 +65,12 @@
           postInstall = ''
             wrapProgram $out/bin/headlessdesk \
               --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.fuse3 ]}
+
+            mkdir -p $out/share/applications
+            substitute ${./deploy/applications/headlessdesk.desktop} \
+              $out/share/applications/headlessdesk.desktop \
+              --replace-fail '{{HOME}}/.local/bin/headlessdesk' \
+              "$out/bin/headlessdesk"
           '';
 
           meta = with pkgs.lib; {
