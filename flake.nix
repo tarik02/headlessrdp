@@ -70,7 +70,7 @@
             substitute ${./deploy/applications/headlessdesk.desktop} \
               $out/share/applications/headlessdesk.desktop \
               --replace-fail '{{HOME}}/.local/bin/headlessdesk' \
-              "$out/bin/headlessdesk"
+              "$out/bin/.headlessdesk-wrapped"
           '';
 
           meta = with pkgs.lib; {

@@ -76,10 +76,10 @@ X-KDE-DBUS-Restricted-Interfaces=org.kde.KWin.ScreenShot2
 ```
 
 The Nix package installs this entry as
-`share/applications/headlessdesk.desktop`. Its `Exec` points to the public
-`bin/headlessdesk` launcher. Keep that exact value: pointing the entry at the
-hidden `.headlessdesk-wrapped` binary breaks KWin authorization for the
-packaged launcher.
+`share/applications/headlessdesk.desktop`. Its `Exec` points to
+`bin/.headlessdesk-wrapped`, the executable KWin sees in `/proc/<pid>/exe`
+after the public launcher invokes it. Keep that exact value: pointing the
+entry at the wrapper script breaks KWin authorization.
 
 KWin reads the entry through the KDE service cache. Install the package into
 the session's `XDG_DATA_DIRS` and build the cache before KWin starts. For an
