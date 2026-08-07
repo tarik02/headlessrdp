@@ -1,5 +1,11 @@
 # headlessdesk
 
+## 0.4.4
+
+### Patch Changes
+
+- 86ca63c: Install the KWin screenshot authorization desktop entry from the Nix package.
+
 ## 0.4.3
 
 ### Patch Changes
