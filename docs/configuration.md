@@ -75,6 +75,21 @@ desktop entry whose `Exec` resolves to the running binary and includes:
 X-KDE-DBUS-Restricted-Interfaces=org.kde.KWin.ScreenShot2
 ```
 
+The Nix package installs this entry as
+`share/applications/headlessdesk.desktop`. Its `Exec` points to
+`bin/.headlessdesk-wrapped`, the executable KWin sees in `/proc/<pid>/exe`
+after the public launcher invokes it. Keep that exact value: pointing the
+entry at the wrapper script breaks KWin authorization.
+
+KWin reads the entry through the KDE service cache. Install the package into
+the session's `XDG_DATA_DIRS` and build the cache before KWin starts. For an
+already running session, rebuild the cache and then restart KWin:
+
+```bash
+kbuildsycoca6 --noincremental
+systemctl --user restart plasma-kwin_wayland.service
+```
+
 Windows can use the native local desktop backend for both screenshots and
 keyboard/mouse input:
 
