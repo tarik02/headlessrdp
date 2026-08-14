@@ -26,9 +26,9 @@ output: "desktop"
 
 backends:
   desktop:
-    type: "rdp" # rdp, vnc, command, kwin, eis, windows, or macos
+    type: "rdp" # rdp, vnc, nanokvm, command, kwin, eis, windows, or macos
     host: "127.0.0.1"
-    port: 0 # 0 means backend default: 3389 for RDP, 5900 for VNC
+    port: 0 # 0 means backend default: 3389 for RDP, 5900 for VNC, 80 for NanoKVM
     username: "gmtest"
     password: "gmtest"
     width: 1280
@@ -118,6 +118,25 @@ require Screen Recording permission. Keyboard and mouse input require Input
 Monitoring and Accessibility permissions. The backend reports missing
 permissions in status and action errors instead of failing server startup.
 Coordinates are screenshot pixels; Retina display scaling is handled internally.
+
+The NanoKVM backend can use a device for both screenshots and keyboard/mouse
+input:
+
+```yaml
+input: "kvm"
+output: "kvm"
+
+backends:
+  kvm:
+    type: "nanokvm"
+    host: "10.0.2.149"
+    port: 80
+    username: "admin"
+    password: "admin"
+```
+
+`host` may also include `http://` or `https://`. Set `insecure: true` only when
+using HTTPS with a certificate that should not be verified.
 
 Input and output can use different backend instances:
 

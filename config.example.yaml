@@ -88,11 +88,11 @@ backends:
 
   # RDP backend. Can be used for input, output, or both.
   desktop:
-    # Backend type: rdp, vnc, command, kwin, eis, windows, or macos.
+    # Backend type: rdp, vnc, nanokvm, command, kwin, eis, windows, or macos.
     type: "rdp"
 
     # Remote host/IP and port. Port 0 means default for backend type:
-    # 3389 for RDP, 5900 for VNC.
+    # 3389 for RDP, 5900 for VNC, 80 for NanoKVM.
     host: "127.0.0.1"
     port: 3391
 
@@ -121,6 +121,18 @@ backends:
       # - gfx or graphics: require graphics pipeline without H.264.
       # - bitmap or legacy: require classic bitmap updates.
       graphics_mode: "auto"
+
+  # NanoKVM backend. Can be used for input, output, or both. Screenshots use
+  # the NanoKVM MJPEG stream, and input uses its HID WebSocket/API.
+  #
+  # nanokvm-desktop:
+  #   type: "nanokvm"
+  #   host: "10.0.2.149"
+  #   port: 80
+  #   username: "admin"
+  #   password: "admin"
+  #   # For HTTPS URLs with certificates that should not be verified.
+  #   insecure: false
 
   # VNC backend. Uncomment and set input/output to use it.
   #

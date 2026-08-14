@@ -31,6 +31,7 @@ import (
 	"headlessdesk/internal/healthapi"
 	"headlessdesk/internal/httpapi"
 	"headlessdesk/internal/mcpapi"
+	"headlessdesk/internal/nanokvm"
 	"headlessdesk/internal/version"
 	"headlessdesk/internal/vnc"
 )
@@ -621,7 +622,7 @@ func validateBackendConfig(name string, cfg backendConfig, roles backendRoles) e
 		return fmt.Errorf("backends.%s.type is required", name)
 	}
 	switch backendType {
-	case "rdp", "vnc", "command", "kwin", "eis", "windows", "macos":
+	case "rdp", "vnc", "command", "kwin", "eis", "windows", "macos", "nanokvm":
 	default:
 		return fmt.Errorf("invalid backends.%s.type: %q", name, cfg.Type)
 	}
@@ -660,6 +661,16 @@ func validateBackendConfig(name string, cfg backendConfig, roles backendRoles) e
 		}
 		if roles.input && cfg.VNC.ViewOnly {
 			return fmt.Errorf("backends.%s.vnc.view_only cannot be true for input backend", name)
+		}
+	case "nanokvm":
+		if strings.TrimSpace(cfg.Host) == "" {
+			return fmt.Errorf("backends.%s.host is required", name)
+		}
+		if strings.TrimSpace(cfg.Username) == "" {
+			return fmt.Errorf("backends.%s.username is required for nanokvm", name)
+		}
+		if strings.TrimSpace(cfg.Password) == "" {
+			return fmt.Errorf("backends.%s.password is required for nanokvm", name)
 		}
 	case "command":
 		if roles.output && !commandConfigured(cfg.Command.Screenshot) {
@@ -904,6 +915,8 @@ func startSessionBackend(name string, cfg backendConfig) (desktop.Session, error
 		return startRDPBackend(name, cfg)
 	case "vnc":
 		return startVNCBackend(name, cfg)
+	case "nanokvm":
+		return startNanoKVMBackend(name, cfg)
 	case "command":
 		return startCommandBackend(name, cfg)
 	case "windows":
@@ -925,6 +938,8 @@ func startOutputBackend(name string, cfg backendConfig) (desktop.OutputBackend, 
 		return startRDPBackend(name, cfg)
 	case "vnc":
 		return startVNCBackend(name, cfg)
+	case "nanokvm":
+		return startNanoKVMBackend(name, cfg)
 	case "command":
 		return startCommandBackend(name, cfg)
 	case "windows":
@@ -946,6 +961,8 @@ func startInputBackend(name string, cfg backendConfig) (desktop.InputBackend, er
 		return startRDPBackend(name, cfg)
 	case "vnc":
 		return startVNCBackend(name, cfg)
+	case "nanokvm":
+		return startNanoKVMBackend(name, cfg)
 	case "command":
 		return startCommandBackend(name, cfg)
 	case "windows":
@@ -993,6 +1010,20 @@ func startVNCBackend(name string, cfg backendConfig) (desktop.Session, error) {
 	})
 	if err != nil {
 		return nil, fmt.Errorf("start VNC backend %q: %w", name, err)
+	}
+	return session, nil
+}
+
+func startNanoKVMBackend(name string, cfg backendConfig) (desktop.Session, error) {
+	session, err := nanokvm.StartSession(nanokvm.Config{
+		Host:               cfg.Host,
+		Port:               uint16(cfg.Port),
+		Username:           cfg.Username,
+		Password:           cfg.Password,
+		InsecureSkipVerify: cfg.Insecure,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("start NanoKVM backend %q: %w", name, err)
 	}
 	return session, nil
 }

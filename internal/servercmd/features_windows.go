@@ -10,7 +10,7 @@ import (
 )
 
 func supportedBackendTypesDescription() string {
-	return "rdp, vnc, command, or windows"
+	return "rdp, vnc, command, nanokvm, or windows"
 }
 
 func validateBackendPlatform(name string, backendType string) error {

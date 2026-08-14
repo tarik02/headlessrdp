@@ -12,6 +12,7 @@ Supported backend types:
 
 - `rdp`: implemented through `internal/freerdp` and FreeRDP.
 - `vnc`: implemented through `internal/vnc` and LibVNCClient.
+- `nanokvm`: implemented through `internal/nanokvm` and NanoKVM's HTTP/WebSocket APIs.
 - `command`: implemented through `internal/commandbackend` and configured
   argv/script templates.
 - `kwin`: implemented through `internal/kwin` and KDE KWin's
@@ -50,6 +51,17 @@ Current VNC behavior:
 - sends key events with X11/RFB keysyms, including common named keys and Latin-1 text input;
 - sends pointer movement, button, and wheel events;
 - allows `backends.<name>.vnc.view_only=true` only when the VNC backend is selected for output and not input.
+
+## NanoKVM Backend
+
+The NanoKVM backend connects to the device web API, authenticates with the same
+AES-wrapped password flow as the bundled UI, decodes the first JPEG frame from
+`/api/stream/mjpeg` for screenshots, and sends USB HID keyboard and absolute
+mouse reports over `/api/ws`. Text typing uses NanoKVM's `/api/hid/paste`
+endpoint.
+
+`backends.<name>.host` may be a plain host/IP or an `http://`/`https://` URL.
+Port defaults to `80`. `username` and `password` are required.
 
 ## KWin Backend
 
